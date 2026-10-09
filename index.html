@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpatialForge | Custom QGIS Development & Spatial Solutions</title>
+    <meta name="description" content="บริการพัฒนา Custom QGIS Plugin, ระบบประมวลผลข้อมูลเชิงพื้นที่อัตโนมัติ (Spatial Automation) และเชื่อมต่อฐานข้อมูล PostGIS สำหรับทีมงานและหน่วยงาน">
+    <meta name="keywords" content="QGIS, PyQGIS, QGIS Plugin, GIS Development, PostGIS, Spatial Database, Python GIS">
+
+    <!-- Website Favicon -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+
+    <!-- Google Fonts: Prompt & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            DEFAULT: '#1E4D2B',
+                            50: '#F0F7F2',
+                            100: '#DDEEE2',
+                            600: '#235C33',
+                            700: '#1E4D2B',
+                            800: '#173D22',
+                            900: '#0F2917',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .contour-bg {
+            background-color: #0b1a10;
+            background-image: url('images/topography.svg');
+            background-size: 600px 600px;
+            background-repeat: repeat;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans flex flex-col min-h-screen">
+
+    <!-- 1. Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3">
+                <img src="images/logo.png" alt="SpatialForge Logo" class="h-10 w-auto object-contain">
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900 block leading-none">SpatialForge</span>
+                    <span class="text-[10px] text-forest-700 font-semibold tracking-wider uppercase block mt-1">Spatial Solutions</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#services" class="hover:text-forest-700 transition">บริการของเรา</a>
+                <a href="#solutions" class="hover:text-forest-700 transition">ตัวอย่างผลงาน</a>
+                <a href="#process" class="hover:text-forest-700 transition">ขั้นตอนการทำงาน</a>
+                <a href="#why-us" class="hover:text-forest-700 transition">ทำไมต้องเรา</a>
+            </nav>
+
+            <div class="hidden md:flex items-center">
+                <a href="#contact" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-forest-700 text-white text-sm font-medium hover:bg-forest-800 transition shadow-sm">
+                    ขอใบเสนอราคา / ปรึกษาฟรี
+                </a>
+            </div>
+
+            <!-- Mobile menu button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="p-2 rounded-md text-slate-600 hover:text-slate-900 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <a href="#services" class="block py-2 text-slate-700 hover:text-forest-700">บริการของเรา</a>
+            <a href="#solutions" class="block py-2 text-slate-700 hover:text-forest-700">ตัวอย่างผลงาน</a>
+            <a href="#process" class="block py-2 text-slate-700 hover:text-forest-700">ขั้นตอนการทำงาน</a>
+            <a href="#why-us" class="block py-2 text-slate-700 hover:text-forest-700">ทำไมต้องเรา</a>
+            <a href="#contact" class="block py-2 text-forest-700 font-semibold">ขอใบเสนอราคา / ติดต่อเรา</a>
+        </div>
+    </header>
+
+    <!-- 2. Hero Section -->
+    <section class="relative contour-bg text-white py-24 lg:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-800/80 border border-forest-600/40 text-emerald-300 text-xs font-medium mb-6">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Custom QGIS Development & Spatial Solutions
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight mb-6">
+                    ยกระดับงานภูมิสารสนเทศ ด้วย Custom QGIS Development
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-300 font-light leading-relaxed mb-8">
+                    พัฒนาปลั๊กอิน ปรับแต่งเครื่องมือเฉพาะทาง และสร้างระบบวิเคราะห์ข้อมูลอัตโนมัติบน QGIS ตอบโจทย์ผู้ปฏิบัติงานและทีมงาน แม่นยำ รวดเร็ว และลดต้นทุนลิขสิทธิ์ซอฟต์แวร์อย่างยั่งยืน
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#contact" class="inline-flex justify-center items-center px-6 py-3.5 rounded-lg bg-emerald-500 text-slate-950 font-semibold text-base hover:bg-emerald-400 transition shadow-lg">
+                        ปรึกษาโจทย์งานของคุณ
+                    </a>
+                    <a href="#solutions" class="inline-flex justify-center items-center px-6 py-3.5 rounded-lg bg-white/10 text-white font-medium text-base hover:bg-white/20 backdrop-blur transition border border-white/20">
+                        ดูตัวอย่างผลงาน
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Core Services -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-xs uppercase tracking-widest text-forest-700 font-semibold mb-2">Our Capabilities</h2>
+                <h3 class="text-3xl font-bold tracking-tight text-slate-900">บริการพัฒนาเครื่องมือ GIS หลัก</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-forest-700/50 hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-lg bg-forest-100 text-forest-700 flex items-center justify-center font-bold text-lg mb-5">01</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">Custom QGIS Plugin Development</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        พัฒนาปลั๊กอินเฉพาะทางตาม Workflow ของทีมงาน ด้วยภาษา Python พร้อมหน้าต่างใช้งาน (GUI) ที่เรียบง่าย สะดวกต่อทีมงานภาคสนามและสำนักงาน
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-forest-700/50 hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-lg bg-forest-100 text-forest-700 flex items-center justify-center font-bold text-lg mb-5">02</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">Spatial Workflow Automation</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        พัฒนาระบบประมวลผลข้อมูลเชิงพื้นที่ปริมาณมากอัตโนมัติ (Batch Processing) บนระบบ QGIS รวมถึงรองรับระบบสคริปต์สำหรับเวิร์กโฟลว์เดิม (ArcPy Scripting) เพื่อลดขั้นตอนซ้ำซ้อน
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-forest-700/50 hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-lg bg-forest-100 text-forest-700 flex items-center justify-center font-bold text-lg mb-5">03</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">Spatial Database Integration</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        ออกแบบและเชื่อมต่อระบบแผนที่เข้ากับฐานข้อมูลเชิงพื้นที่ PostgreSQL / PostGIS รวมถึงการดึงและส่งข้อมูลผ่าน REST API เพื่อการทำงานร่วมกันในทีม
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Featured Solutions & Portfolio -->
+    <section id="solutions" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-2xl mb-14">
+                <h2 class="text-xs uppercase tracking-widest text-forest-700 font-semibold mb-2">Selected Works</h2>
+                <h3 class="text-3xl font-bold tracking-tight text-slate-900">ตัวอย่างโซลูชันและผลงาน</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Case 1: PWA Live Distance -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between">
+                    <div class="w-full h-48 bg-slate-200 flex items-center justify-center border-b border-slate-200 overflow-hidden">
+                        <img src="images/work1.png" alt="PWA Live Distance" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition duration-300" onclick="openLightbox(this.src, this.alt)">
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block px-2.5 py-1 rounded text-xs font-semibold bg-emerald-100 text-forest-700 mb-3">Published on Global QGIS Repository</span>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">PWA Live Distance</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            <strong>โจทย์ของทีมงาน:</strong> การวางโครงข่ายสาธารณูปโภคที่ต้องกำหนดระยะทางที่แน่นอน ผู้ปฏิบัติงานต้องเสียเวลาวัดและปรับแก้หลายรอบ<br><br>
+                            <strong>โซลูชันจากเรา:</strong> พัฒนาปลั๊กอินที่ได้รับการเผยแพร่อย่างเป็นทางการบนคลัง QGIS ของโลก ช่วยคำนวณระยะทางแบบ Real-time ทันทีขณะวาดเส้น พร้อมระบบล็อกระยะจำกัดขอบเขตอัตโนมัติ<br><br>
+                            <strong>ผลลัพธ์:</strong> ลดขั้นตอนการวาดโครงข่าย ยกระดับความแม่นยำของข้อมูลพิกัด
+                        </p>
+                        <a href="https://plugins.qgis.org/plugins/PWA_Live_Distance/" target="_blank" class="text-sm font-semibold text-forest-700 hover:underline">
+                            ดูผลงานบน QGIS Repository &rarr;
+                        </a>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-500 font-mono">
+                        #OpenSource #QGIS Plugin #Utility Network
+                    </div>
+                </div>
+
+                <!-- Case 2: Meter Layout -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between">
+                    <div class="w-full h-48 bg-slate-200 flex items-center justify-center border-b border-slate-200 overflow-hidden">
+                        <img src="images/work2.png" alt="ระบบจัดทำแผนผังและพิมพ์รายงานอัตโนมัติ" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition duration-300" onclick="openLightbox(this.src, this.alt)">
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block px-2.5 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-800 mb-3">Enterprise Utility Workflow</span>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">ระบบจัดทำแผนผังและพิมพ์รายงานอัตโนมัติ</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            <strong>โจทย์ของทีมงาน:</strong> ต้องเสียเวลาคีย์ข้อมูลจาก Excel ลงฟอร์มกระดาษ และแคปเจอร์แผนที่มาประกอบเพื่อพิมพ์ใบสั่งงานทีละรายการ<br><br>
+                            <strong>โซลูชันจากเรา:</strong> พัฒนาปลั๊กอินดึงข้อมูลจากไฟล์ Excel มาสร้างแผนผังพิกัดอัตโนมัติ พร้อมสแตมป์รายละเอียดสำคัญ (พิกัด, ลายเซ็นต์, QR Code) และส่งพิมพ์รายงานได้ในคลิกเดียว<br><br>
+                            <strong>ผลลัพธ์:</strong> ลดเวลาจาก 10 นาทีเหลือเพียงไม่กี่วินาทีต่อ 1 คำร้อง ส่งมอบใบสั่งงานหน้างานได้ถูกต้อง 100%
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-500 font-mono">
+                        #Layout Automation #Data Extraction #Enterprise GIS
+                    </div>
+                </div>
+
+                <!-- Case 3: Auto-Copy / Data Entry -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between">
+                    <div class="w-full h-48 bg-slate-200 flex items-center justify-center border-b border-slate-200 overflow-hidden">
+                        <img src="images/work3.png" alt="ระบบสกัดพิกัดจากเอกสารและนำเข้าข้อมูล" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition duration-300" onclick="openLightbox(this.src, this.alt)">
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block px-2.5 py-1 rounded text-xs font-semibold bg-amber-100 text-amber-800 mb-3">Smart Digitizing & Auto-Copy</span>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">ระบบสกัดพิกัดจากเอกสารและนำเข้าข้อมูล</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            <strong>โจทย์ของทีมงาน:</strong> การพิมพ์นำเข้าข้อมูลพิกัดจากเอกสารรายงานจำนวนมากทีละบรรทัด เสี่ยงต่อการพิมพ์ผิดและใช้เวลานาน<br><br>
+                            <strong>โซลูชันจากเรา:</strong> พัฒนาเครื่องมือรองรับ Batch Processing สแกนดึงพิกัดจาก QR Code บน PDF อัตโนมัติ เลื่อนหน้าจอแผนที่ไปยังจุดเป้าหมาย พร้อมคัดลอกรหัสข้อมูลให้วางลงฐานข้อมูลส่วนกลางได้ทันที<br><br>
+                            <strong>ผลลัพธ์:</strong> เปลี่ยนเป็นระบบกึ่งอัตโนมัติ ลดข้อผิดพลาดเหลือ 0% และประหยัดเวลาการทำ Data Entry
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-500 font-mono">
+                        #Data Extraction #QR/OCR Parsing #Workflow Automation
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Working Process -->
+    <section id="process" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-xs uppercase tracking-widest text-forest-700 font-semibold mb-2">How We Work</h2>
+                <h3 class="text-3xl font-bold tracking-tight text-slate-900">ขั้นตอนการทำงาน</h3>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="relative">
+                    <div class="text-3xl font-extrabold text-forest-700/30 mb-2">01</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">รวบรวมความต้องการ</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">รับโจทย์ ศึกษาโครงสร้างข้อมูล และกำหนดขอบเขตฟังก์ชันของเครื่องมือร่วมกัน</p>
+                </div>
+                <div class="relative">
+                    <div class="text-3xl font-extrabold text-forest-700/30 mb-2">02</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">พัฒนาและขึ้นโครงสร้าง</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">เขียนโค้ดสคริปต์ PyQGIS และออกแบบ UI ตามมาตรฐาน พร้อมส่งแบบทดลองเบื้องต้น</p>
+                </div>
+                <div class="relative">
+                    <div class="text-3xl font-extrabold text-forest-700/30 mb-2">03</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">ทดสอบประสิทธิภาพ</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">ทดสอบร่วมกับชุดข้อมูลจริง ตรวจสอบความถูกต้องทางพิกัด และปรับแต่งความเร็ว</p>
+                </div>
+                <div class="relative">
+                    <div class="text-3xl font-extrabold text-forest-700/30 mb-2">04</div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">ส่งมอบและคู่มือ</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">ส่งมอบซอร์สโค้ด ตัวติดตั้งปลั๊กอิน พร้อมคู่มือและวิดีโอแนะนำการใช้งานอย่างครบถ้วน</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Why SpatialForge? -->
+    <section id="why-us" class="py-20 bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+                <div class="lg:col-span-1">
+                    <h2 class="text-xs uppercase tracking-widest text-emerald-400 font-semibold mb-2">Why SpatialForge</h2>
+                    <h3 class="text-3xl font-bold tracking-tight text-white mb-4">ทำไมต้องเลือกให้เราเป็นผู้พัฒนาโซลูชัน GIS ของคุณ?</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        เราไม่ได้เป็นเพียงนักเขียนโปรแกรมทั่วไป แต่เป็นนักปฏิบัติงานที่เข้าใจระบบสาธารณูปโภคและโครงสร้างข้อมูลเชิงพื้นที่อย่างลึกซึ้ง
+                    </p>
+                </div>
+                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="p-6 rounded-lg bg-slate-800/80 border border-slate-700">
+                        <h4 class="text-base font-bold text-emerald-300 mb-2">ดำเนินงานโดยนักภูมิศาสตร์ผู้เชี่ยวชาญ</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            มีประสบการณ์เชิงปฏิบัติการด้านแผนที่และระบบสาธารณูปโภค เข้าใจโครงสร้างข้อมูล (Topology) และระบบพิกัดอ้างอิง (CRS) สื่อสารโจทย์เทคนิคได้อย่างแม่นยำ
+                        </p>
+                    </div>
+                    <div class="p-6 rounded-lg bg-slate-800/80 border border-slate-700">
+                        <h4 class="text-base font-bold text-emerald-300 mb-2">คุ้มค่าและลดภาระงบประมาณระยะยาว</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            พัฒนาโซลูชันบนแพลตฟอร์ม Open Source เพื่อให้ผู้ใช้งานและทีมงานเป็นเจ้าของระบบอย่างแท้จริง ปราศจากข้อผูกมัดค่าลิขสิทธิ์รายปี
+                        </p>
+                    </div>
+                    <div class="p-6 rounded-lg bg-slate-800/80 border border-slate-700">
+                        <h4 class="text-base font-bold text-emerald-300 mb-2">สถาปัตยกรรมโค้ดมาตรฐานระดับสากล</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            พัฒนาชุดคำสั่งตามมาตรฐานสากล (PEP 8) โครงสร้างโค้ดมีความยืดหยุ่น รองรับการขยายขีดความสามารถในอนาคต
+                        </p>
+                    </div>
+                    <div class="p-6 rounded-lg bg-slate-800/80 border border-slate-700">
+                        <h4 class="text-base font-bold text-emerald-300 mb-2">รักษาความปลอดภัยและความลับของข้อมูล</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ปฏิบัติงานภายใต้ข้อตกลงรักษาความลับ (NDA) อย่างเคร่งครัด เพื่อให้มั่นใจว่าข้อมูลของโครงการจะถูกปกป้องอย่างปลอดภัย
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Contact Section -->
+    <section id="contact" class="py-20 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-xs uppercase tracking-widest text-forest-700 font-semibold mb-2">Get In Touch</h2>
+                <h3 class="text-3xl font-bold tracking-tight text-slate-900">ปรึกษาโจทย์งาน หรือขอใบเสนอราคา</h3>
+                <p class="text-sm text-slate-600 mt-2">ระบุรายละเอียดเครื่องมือที่ต้องการพัฒนา ยินดีลงนามในข้อตกลงรักษาความลับ (NDA) ก่อนเริ่มการหารือรายละเอียดโครงการ</p>
+            </div>
+
+            <div class="bg-white p-8 sm:p-10 rounded-2xl border border-slate-200 shadow-sm">
+                <!-- ฟอร์มเชื่อมต่อ FormSubmit พร้อมระบบป้องกันสแปม -->
+                <form action="https://formsubmit.co/fccfccb7569e2917f066fc9faf6f48d2" method="POST" class="space-y-6">
+                    <!-- ทริคกันบอท Honeypot -->
+                    <input type="text" name="_honey" style="display:none">
+                    <!-- เปิดใช้งานระบบ reCAPTCHA -->
+                    <input type="hidden" name="_captcha" value="true">
+                    
+                    <input type="hidden" name="_subject" value="มีข้อความติดต่อใหม่จากเว็บไซต์ SpatialForge!">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">ชื่อ หรือ หน่วยงานที่ติดต่อ *</label>
+                            <input type="text" name="name" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-forest-700 focus:outline-none" placeholder="เช่น ทีม GIS หรือ ชื่อผู้ติดต่อ">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">อีเมลติดต่อกลับ *</label>
+                            <input type="email" name="email" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-forest-700 focus:outline-none" placeholder="example@email.com">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">ประเภทบริการที่สนใจ *</label>
+                        <select name="service_type" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-forest-700 focus:outline-none bg-white">
+                            <option value="plugin">พัฒนา Custom QGIS Plugin</option>
+                            <option value="automation">สคริปต์ประมวลผลข้อมูลอัตโนมัติ (Python Script)</option>
+                            <option value="database">ออกแบบและเชื่อมต่อฐานข้อมูล PostGIS / API</option>
+                            <option value="other">งานให้คำปรึกษาหรืออื่นๆ</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">รายละเอียดโจทย์งานเบื้องต้น *</label>
+                        <textarea name="details" rows="4" required placeholder="อธิบายขั้นตอนการทำงานปัจจุบัน ปัญหาที่พบ หรือผลลัพธ์ที่ต้องการให้เครื่องมือช่วยทำงาน..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-forest-700 focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 px-6 rounded-lg bg-forest-700 text-white font-semibold text-base hover:bg-forest-800 transition shadow-md">
+                        ส่งข้อมูลเพื่อขอรับคำปรึกษาและใบเสนอราคา
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <img src="images/logo.png" alt="SpatialForge Logo" class="h-6 w-auto object-contain">
+                <span class="font-bold text-slate-800 text-sm">SpatialForge</span>
+                <span class="text-slate-400">|</span>
+                <span>Custom QGIS Development & Spatial Solutions</span>
+            </div>
+            <div>
+                © 2026 SpatialForge. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- 9. Image Lightbox Modal -->
+    <div id="image-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightbox(event)">
+        <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center cursor-default" onclick="event.stopPropagation()">
+            <button onclick="closeLightboxDirect()" class="absolute -top-10 right-0 text-white/80 hover:text-white p-1 text-sm flex items-center gap-1 focus:outline-none">
+                <span>ปิด</span>
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <img id="modal-img" src="" alt="" class="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl border border-white/10">
+            <p id="modal-caption" class="text-slate-300 text-sm mt-3 text-center font-medium"></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Image Lightbox logic
+        const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalCaption = document.getElementById('modal-caption');
+
+        function openLightbox(src, alt) {
+            modalImg.src = src;
+            modalImg.alt = alt;
+            modalCaption.textContent = alt;
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeLightboxDirect() {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function closeLightbox(e) {
+            if (e.target === modal) {
+                closeLightboxDirect();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeLightboxDirect();
+            }
+        });
+    </script>
+</body>
+</html>
